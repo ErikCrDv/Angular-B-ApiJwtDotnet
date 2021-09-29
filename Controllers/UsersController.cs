@@ -32,14 +32,14 @@ namespace ApiClientes.Controllers
 					UserName = userDto.UserName
 				}, userDto.Password);
 
-			if(respuesta == -1)
+			if(respuesta == "existe")
 			{
 				_responseDto.IsSuccess = false;
 				_responseDto.DisplayMessage = "El usuario ya existe";
 				return BadRequest(_responseDto);
 			}
 
-			if(respuesta == -500)
+			if(respuesta == "error")
 			{
 				_responseDto.IsSuccess = false;
 				_responseDto.DisplayMessage = "Error al crear el usuiario";
@@ -47,7 +47,12 @@ namespace ApiClientes.Controllers
 			}
 
 			_responseDto.DisplayMessage = "Usuario creado con exito";
-			_responseDto.Result = respuesta;
+			//_responseDto.Result = respuesta;
+
+			JwTPackage jtp = new JwTPackage();
+			jtp.UserName = userDto.UserName;
+			jtp.Token = respuesta;
+			_responseDto.Result = jtp;
 			return Ok(_responseDto);
 		}
 
@@ -69,9 +74,19 @@ namespace ApiClientes.Controllers
 				return BadRequest(_responseDto);
 			}
 
-			_responseDto.Result = respuesta;
+			//_responseDto.Result = respuesta;
 			_responseDto.DisplayMessage = "Usuario Conectado";
+			JwTPackage jtp = new JwTPackage();
+			jtp.UserName = userDto.UserName;
+			jtp.Token = respuesta;
+			_responseDto.Result = jtp;
 			return Ok(_responseDto);
 		}
+	}
+
+	public class JwTPackage
+	{
+		public string UserName { get; set; }
+		public string Token { get; set; }
 	}
 }
